@@ -2,7 +2,7 @@
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 import hashlib, hmac, base64, json
-import time, queue, threading, sys
+import time, queue, threading, sys, os.path, os
 
 API_0_URL = 'https://mtgox.com/api/0/'
 API_1_URL = 'https://mtgox.com/api/1/'
@@ -23,6 +23,7 @@ COMMANDS = [
     'update',
     'account',
     'clear',
+    'save',
     'help',
 ]
 
@@ -34,7 +35,8 @@ COMMAND_HELP = {
     'account':{'info':['','Returns account information']},
     'help':{'':['','Prints useful help information'],
             'command':['[args]','Prints help about command']},
-    'clear':{'':['','Clear messages from the log']}
+    'clear':{'':['','Clear messages from the log']},
+    'save':{'':['(file) [-overwrite]','save the message log to a file']}
 }
 
 WEBSOCKET_CONNECTED = 0

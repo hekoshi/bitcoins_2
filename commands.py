@@ -71,7 +71,7 @@ class Commands(object):
         elif args[0] == 'frequency':
             try: frequency = int(args[1])
             except ValueError: return -1
-            if frequency < 1: return -1
+            if frequency < 1: self.message('/update: Update frequency must be at least 1'); return
             self.events += Event(UPDATE_FREQUENCY_CHANGE, frequency=frequency)
             self.message('/update: Update frequency set to %s seconds' % frequency)
 
@@ -88,3 +88,19 @@ class Commands(object):
             messages.append('Funds: %s' % ' '.join([' '.join([str(self.account.wallets[x].balance), x]) for x in self.account.wallets]))
             for message in messages:
                 self.message(message)
+
+    def save_command(self, args):
+        if not args: self.message('/save: no file specified'); return
+        if os.path.exists(args[0]) and '-overwrite' not in args:
+            self.message('/save: file already exists, use -overwrite to overwrite')
+            return
+        elif '-overwrite' in args:
+            args.remove('-overwrite')
+            self.message('/save: overwriting file \'%s\'' % args[0])
+        else:
+            self.message('/save: writing to file \'%s\'' % args[0])
+        logfile = open(args[0],'w')
+        for line in self.window.messages:
+            logfile.write(line+'\n')
+        logfile.close()
+        self.message('/save: wrote file')

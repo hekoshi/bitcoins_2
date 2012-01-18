@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Tue Jan 17 13:31:57 2012
+# Created: Tue Jan 17 19:16:54 2012
 #      by: PyQt4 UI code generator 4.9
 #
 # WARNING! All changes made in this file will be lost!
@@ -148,7 +148,6 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.actionQuit, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.close)
-        QtCore.QObject.connect(self.actionClear_Messages, QtCore.SIGNAL(_fromUtf8("triggered()")), self.messageList.clear)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

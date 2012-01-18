@@ -23,6 +23,7 @@ class Window(QtGui.QMainWindow):
         self.red_palette.setColor(self.red_palette.Text, QtGui.QColor(255,0,0))
         self.green_palette.setColor(self.green_palette.Text, QtGui.QColor(0,255,0))
         self.ui.commandEdit.setFocus()
+        self.messages = []
         self.connect(self, QtCore.SIGNAL("setTicker"), self.setTickerText)
         self.connect(self, QtCore.SIGNAL('addTrade'), self.addTrade)
         self.connect(self, QtCore.SIGNAL('resetTrades'), self.resetTrades)
@@ -33,6 +34,7 @@ class Window(QtGui.QMainWindow):
         self.connect(self, QtCore.SIGNAL('addMessage'), self.addMessage)
         self.connect(self, QtCore.SIGNAL('resetTickerColor'), self.resetTickerColor)
         self.connect(self.ui.actionFull_Update, QtCore.SIGNAL('triggered()'), self.full_update)
+        self.connect(self.ui.actionClear_Messages, QtCore.SIGNAL('triggered()'), self.clearMessages)
         self.connect(self.ui.commandEdit, QtCore.SIGNAL('returnPressed()'), self.commandAction)
 
     def full_update(self):
@@ -46,6 +48,7 @@ class Window(QtGui.QMainWindow):
         self.ui.statusbar.clearMessage()
 
     def clearMessages(self):
+        self.messages = []
         self.ui.messageList.clear()
 
     def commandAction(self):
@@ -129,6 +132,7 @@ class Window(QtGui.QMainWindow):
 
     def addMessage(self, message):
         QtGui.QTreeWidgetItem(self.ui.messageList, [time.strftime('%H:%M:%S'),message])
+        self.messages.append('%s\t%s' % (time.strftime('%H:%M:%S'),message))
         self.ui.messageList.scrollToItem(self.ui.messageList.topLevelItem(self.ui.messageList.topLevelItemCount()-1))
 
 if __name__ == "__main__":

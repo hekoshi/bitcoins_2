@@ -1,0 +1,11 @@
+21:17:18	starting
+21:17:18	running full update
+21:17:58	connecting
+21:17:58	websocket connected
+21:17:58	update thread started
+21:17:58	subscribed to 'trades' channel
+21:17:58	subscribed to 'ticker' channel
+21:17:58	subscribed to 'depth' channel
+21:18:03	/save: file already exists, use -overwrite to overwrite
+21:18:08	Comment: a few comments here
+21:18:14	/save: overwriting file 'log.txt'

@@ -311,21 +311,5 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>actionClear_Messages</sender>
-   <signal>triggered()</signal>
-   <receiver>messageList</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>385</x>
-     <y>454</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>
