@@ -16,6 +16,7 @@ class Ticker(object):
         self.last = None
         self.buy = None
         self.sell = None
+        self.__update_lock = threading.Lock()
 
     def __getitem__(self, name):
         if name in self.ITEMS:
@@ -28,16 +29,17 @@ class Ticker(object):
         else: return ValueError('name not found')
 
     def update(self, data=None):
-        if data is None:
-            req = urlopen(API_1_URL+URLS['ticker'])
-            data = json.loads(req.read().decode())
-        change = {}; total_change = False
-        for item in data:
-            if item in self.ITEMS:
-                new = int(data[item]['value_int'])/FACTORS[data[item]['currency']]
-                if self[item] != new and self[item] is not None:
-                    change[self.ITEMS[item]] = self[item]-new
-                    total_change = True
-                else: change[self.ITEMS[item]] = 0
-                self[item] = new
-        return change, total_change
+        with self.__update_lock:
+            if data is None:
+                req = urlopen(API_1_URL+URLS['ticker'])
+                data = json.loads(req.read().decode())
+            change = {}; total_change = False
+            for item in data:
+                if item in self.ITEMS:
+                    new = int(data[item]['value_int'])/FACTORS[data[item]['currency']]
+                    if self[item] != new and self[item] is not None:
+                        change[self.ITEMS[item]] = new-self[item]
+                        total_change = True
+                    else: change[self.ITEMS[item]] = 0
+                    self[item] = new
+            return change, total_change

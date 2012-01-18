@@ -29,15 +29,16 @@ class Depth(object):
         else: raise NameError('name not found')
 
     def update(self):
-        req = urlopen(API_1_URL+URLS['depth'])
-        data = json.loads(req.read().decode())
-        self.asks = {}
-        self.bids = {}
-        for item in data['asks']:
-            price = int(item['price_int'])/FACTORS['USD']
-            amount = int(item['amount_int'])/FACTORS['BTC']
-            self.asks[price] = amount
-        for item in data['bids']:
-            price = int(item['price_int'])/FACTORS['USD']
-            amount = int(item['amount_int'])/FACTORS['BTC']
-            self.bids[price] = amount
+        with self.add_lock:
+            req = urlopen(API_1_URL+URLS['depth'])
+            data = json.loads(req.read().decode())
+            self.asks = {}
+            self.bids = {}
+            for item in data['asks']:
+                price = int(item['price_int'])/FACTORS['USD']
+                amount = int(item['amount_int'])/FACTORS['BTC']
+                self.asks[price] = amount
+            for item in data['bids']:
+                price = int(item['price_int'])/FACTORS['USD']
+                amount = int(item['amount_int'])/FACTORS['BTC']
+                self.bids[price] = amount

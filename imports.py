@@ -22,6 +22,7 @@ COMMANDS = [
     'quit',
     'update',
     'account',
+    'clear',
     'help',
 ]
 
@@ -29,10 +30,11 @@ COMMAND_HELP = {
     'comment':{'':['','Useful for when your comment starts with a command.']},
     'quit':{'':['','Quit this application']},
     'update':{'':['','Runs full update'],
-              'frequency':[' (seconds)','Sets update frequency']},
+              'frequency':['(seconds)','Sets update frequency']},
     'account':{'info':['','Returns account information']},
     'help':{'':['','Prints useful help information'],
-            'command':[' [args]','Prints help about command']}
+            'command':['[args]','Prints help about command']},
+    'clear':{'':['','Clear messages from the log']}
 }
 
 WEBSOCKET_CONNECTED = 0

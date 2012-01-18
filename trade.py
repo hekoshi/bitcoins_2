@@ -38,19 +38,22 @@ class Trade(object):
 class Trades(object):
     def __init__(self):
         self.trades = []
+        self.__update_lock = threading.Lock()
 
     def __add__(self, x):
-        assert(isinstance(x, Trade))
-        self.trades.append(x)
-        self.trades.sort()
-        return self
+        with self.__update_lock:
+            assert(isinstance(x, Trade))
+            self.trades.append(x)
+            self.trades.sort()
+            return self
 
     def __iter__(self):
         return iter(self.trades)
 
     def update(self):
-        req = urlopen(API_1_URL+URLS['trades'])
-        data = json.loads(req.read().decode())
-        for trade in data:
-            self.trades.append(Trade(**trade))
-        self.trades.sort()
+        with self.__update_lock:
+            req = urlopen(API_1_URL+URLS['trades'])
+            data = json.loads(req.read().decode())
+            for trade in data:
+                self.trades.append(Trade(**trade))
+            self.trades.sort()

@@ -32,14 +32,21 @@ class Commands(object):
     def quit_command(self, args):
         self.window.close()
 
+    def clear_command(self,args):
+        self.window.emit(QtCore.SIGNAL('clearMessages'))
+
     def help_command(self, args):
         if not args:
             for command in COMMAND_HELP:
                 for arg in COMMAND_HELP[command]:
                     if not arg:
-                        self.message('/%s%s: %s' % (command, COMMAND_HELP[command][arg][0], COMMAND_HELP[command][arg][1]))
+                        self.message('/%s%s: %s' % (command,
+                            (' '*int(bool(COMMAND_HELP[command][arg][0])))+COMMAND_HELP[command][arg][0],
+                            COMMAND_HELP[command][arg][1]))
                     else:
-                        self.message('/%s %s%s: %s' % (command, arg, COMMAND_HELP[command][arg][0], COMMAND_HELP[command][arg][1]))
+                        self.message('/%s %s%s: %s' % (command, arg,
+                            (' '*int(bool(COMMAND_HELP[command][arg][0])))+COMMAND_HELP[command][arg][0],
+                            COMMAND_HELP[command][arg][1]))
         if args:
             name = args[0]
             string = ' '.join(args[1:])
@@ -48,10 +55,16 @@ class Commands(object):
             if not string:
                 for arg in COMMAND_HELP[name]:
                     if not arg:
-                        self.message('/%s%s: %s' % (name, COMMAND_HELP[name][arg][0], COMMAND_HELP[name][arg][1]))
+                        self.message('/%s%s: %s' % (name,
+                            (' '*int(bool(COMMAND_HELP[name][arg][0])))+COMMAND_HELP[name][arg][0],
+                            COMMAND_HELP[name][arg][1]))
                     else:
-                        self.message('/%s %s%s: %s' % (name, arg, COMMAND_HELP[name][arg][0], COMMAND_HELP[name][arg][1]))
-            else: self.message('/%s %s%s: %s' % (name, string, COMMAND_HELP[name][string][0], COMMAND_HELP[name][string][1]))
+                        self.message('/%s %s%s: %s' % (name, arg,
+                            (' '*int(bool(COMMAND_HELP[name][arg][0])))+COMMAND_HELP[name][arg][0],
+                            COMMAND_HELP[name][arg][1]))
+            else: self.message('/%s %s%s: %s' % (name, string,
+                      (' '*int(bool(COMMAND_HELP[name][arg][0])))+COMMAND_HELP[name][string][0],
+                      COMMAND_HELP[name][string][1]))
 
     def update_command(self, args):
         if len(args) == 0: self.events += Event(FULL_UPDATE_REQUESTED)
@@ -60,7 +73,7 @@ class Commands(object):
             except ValueError: return -1
             if frequency < 1: return -1
             self.events += Event(UPDATE_FREQUENCY_CHANGE, frequency=frequency)
-            self.message('Update frequency set to %s seconds' % frequency)
+            self.message('/update: Update frequency set to %s seconds' % frequency)
 
     def account_command(self, args):
         if args[0] == 'info':

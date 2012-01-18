@@ -34,16 +34,19 @@ class Application(object):
         if time.time()-self.last_update < self.update_frequency: return
         self.__statusbar('running full update', 0)
         self.__message('running full update')
-        self.last_update = time.time()
+        self.__statusbar('running full update (account)',0)
         self.account.update()
         self.events += Event(ACCOUNT_UPDATED)
-        self.last_update = time.time()
+        self.__statusbar('running full update (ticker)',0)
         self.ticker.update()
         self.events += Event(TICKER_UPDATE, change=self.empty_ticker)
+        self.__statusbar('running full update (depth)', 0)
         self.depth.update()
         self.events += Event(RESET_DEPTH)
+        self.__statusbar('running full update (trades)', 0)
         self.trades.update()
         self.events += Event(TRADE_RESET)
+        self.last_update = time.time()
         self.__statusbar()
 
     def __gui_thread(self):

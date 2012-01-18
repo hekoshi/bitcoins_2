@@ -28,6 +28,7 @@ class Window(QtGui.QMainWindow):
         self.connect(self, QtCore.SIGNAL('resetTrades'), self.resetTrades)
         self.connect(self, QtCore.SIGNAL('updateMessage'), self.updateMessage)
         self.connect(self, QtCore.SIGNAL('clearMessage'), self.clearMessage)
+        self.connect(self, QtCore.SIGNAL('clearMessages'), self.clearMessages)
         self.connect(self, QtCore.SIGNAL('updateDepth'), self.updateDepth)
         self.connect(self, QtCore.SIGNAL('addMessage'), self.addMessage)
         self.connect(self, QtCore.SIGNAL('resetTickerColor'), self.resetTickerColor)
@@ -43,6 +44,9 @@ class Window(QtGui.QMainWindow):
 
     def clearMessage(self):
         self.ui.statusbar.clearMessage()
+
+    def clearMessages(self):
+        self.ui.messageList.clear()
 
     def commandAction(self):
         command = self.ui.commandEdit.text()
@@ -102,18 +106,24 @@ class Window(QtGui.QMainWindow):
         elif change['sell'] < 0: self.ui.sellEdit.setPalette(self.red_palette)
 
     def addTrade(self, trade):
-        QtGui.QTreeWidgetItem(self.ui.tradeList, [trade.type,str(trade.price),str(trade.amount)])
+        if trade.currency == 'USD':
+            QtGui.QTreeWidgetItem(self.ui.tradeList, [trade.type,str(trade.price),str(trade.amount)])
+        while self.ui.tradeList.topLevelItemCount() > 100:
+            self.ui.tradeList.takeTopLevelItem(0)
         self.ui.tradeList.scrollToItem(self.ui.tradeList.topLevelItem(self.ui.tradeList.topLevelItemCount()-1))
 
     def resetTrades(self):
         self.ui.tradeList.clear()
         for trade in self.trades:
-            QtGui.QTreeWidgetItem(self.ui.tradeList, [trade.type,str(trade.price),str(trade.amount)])
+            if trade.currency == 'USD':
+                QtGui.QTreeWidgetItem(self.ui.tradeList, [trade.type,str(trade.price),str(trade.amount)])
+        while self.ui.tradeList.topLevelItemCount() > 100:
+            self.ui.tradeList.takeTopLevelItem(0)
         self.ui.tradeList.scrollToItem(self.ui.tradeList.topLevelItem(self.ui.tradeList.topLevelItemCount()-1))
 
     def updateDepth(self, change):
         QtGui.QTreeWidgetItem(self.ui.depthList, [change['type_str'],change['price'],change['volume']])
-        while self.ui.depthList.topLevelItemCount() >= 50:
+        while self.ui.depthList.topLevelItemCount() > 50:
             self.ui.depthList.takeTopLevelItem(0)
         self.ui.depthList.scrollToItem(self.ui.depthList.topLevelItem(self.ui.depthList.topLevelItemCount()-1))
 
