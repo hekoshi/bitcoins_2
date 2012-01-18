@@ -40,9 +40,13 @@ class Updater(object):
                     if int(data['depth']['volume_int']): self.events += Event(DEPTH_UPDATE, change=data['depth'])
 
     def connect(self):
-        self.socket = websocket(WEBSOCKET_URL)
-        self.events += Event(WEBSOCKET_CONNECTED)
-        self.update_thread = threading.Thread(target=self.__run)
-        self.stop = False
-        self.update_thread.start()
-        self.events += Event(UPDATE_THREAD_STARTED)
+        try:
+            self.socket = websocket(WEBSOCKET_URL)
+            self.events += Event(WEBSOCKET_CONNECTED)
+            self.update_thread = threading.Thread(target=self.__run)
+            self.stop = False
+            self.update_thread.start()
+            self.events += Event(UPDATE_THREAD_STARTED)
+        except:
+            self.events += Event(WEBSOCKET_DISCONNECTED)
+            return
