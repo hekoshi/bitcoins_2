@@ -8,16 +8,13 @@ from events import *
 from gui import *
 from commands import *
 
-API_KEY = '3a77f9a2-ab3a-44c4-a9a5-9e1c432aeb34'
-API_SECRET = 'tbO8HZBKGbDAS5+D23fbMKTLg2oqr4/xM6FkXCiXlRxziWK1ZXA8dCx1L7DmfjPSYVZU9PqiSfzsLIyGue1c/A=='
-
 class Application(object):
     def __init__(self):
         self.events = Events()
         self.ticker = Ticker()
         self.depth = Depth()
         self.trades = Trades()
-        self.account = Account(API_KEY,API_SECRET)
+        self.account = Account(None,None)
         self.updater = Updater(self.events, self.ticker, self.depth, self.trades)
         self.commands = Commands(self.events, self.account, self.ticker, self.trades, self.depth)
         self.update_frequency = 300
@@ -36,9 +33,13 @@ class Application(object):
         if time.time()-self.last_update < self.update_frequency: return
         self.__statusbar('running full update', 0)
         self.__message('running full update')
-        self.__statusbar('running full update (account)',0)
-        self.account.update()
-        self.events += Event(ACCOUNT_UPDATED)
+        if self.account.logged_in:
+            self.__statusbar('running full update (account)',0)
+            try: self.account.update()
+            except AccountError as e: self.__message('account update failed: %s' % e)
+            else: self.events += Event(ACCOUNT_UPDATED)
+        else:
+            self.__message('Account not logged in, log in with /login (file) (password)')
         self.__statusbar('running full update (ticker)',0)
         self.ticker.update()
         self.events += Event(TICKER_UPDATE, change=self.empty_ticker)
@@ -52,11 +53,14 @@ class Application(object):
         self.__statusbar()
 
     def update(self, account, ticker, depth, trades):
-        if account:
+        if account and self.account.logged_in:
             self.__statusbar('updating account',0)
             self.__message('updating account')
-            self.account.update()
-            self.events += Event(ACCOUNT_UPDATED)
+            try: self.account.update()
+            except AccountError as e: self.__message('account update failed: %s' % e)
+            else: self.events += Event(ACCOUNT_UPDATED)
+        elif not self.account.logged_in:
+            self.__message('Account not logged in, log in with /login (file) (password)')
         if ticker:
             self.__statusbar('updating ticker',0)
             self.__message('updating ticker')
@@ -108,6 +112,7 @@ class Application(object):
 
     def __run(self):
         self.__wait_for_gui()
+        self.__message('type /help for a list of possible commands')
         self.__statusbar('starting', 0)
         self.__message('starting')
         self.full_update()
@@ -131,7 +136,6 @@ class Application(object):
                         self.connected = False
                 elif event.type == UPDATE_THREAD_STARTED:
                     self.__message('update thread started')
-                    self.__message('type /help for a list of possible commands')
                 elif event.type == ACCOUNT_UPDATED:
                     #self.__message('Current Funds: %s %s' % (self.account.wallets['BTC'],self.account.wallets['USD']))
                     pass
@@ -188,6 +192,14 @@ class Application(object):
                         self.updater.connect()
                         self.__statusbar()
                     else: pass
+                elif event.type == API_KEY_UNLOCKED:
+                    self.account.update_login_info(event.key,event.secret)
+                    self.__message('updating account')
+                    self.__statusbar('updating account',0)
+                    try: self.account.update()
+                    except AccountError as e: self.__message('account update failed: %s' % e)
+                    else: self.events += Event(ACCOUNT_UPDATED)
+                    self.__statusbar()
 
             self.full_update()
             if self.last_ticker_color_change is not None:
