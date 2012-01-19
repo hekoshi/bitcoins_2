@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from imports import *
 
+class AccountError(Exception): pass
+
 class Wallet(object):
     def __init__(self, currency, Balance,
                  Daily_Withdraw_Limit,
@@ -44,8 +46,8 @@ class Order(object):
 
 class Account(object):
     def __init__(self, key, secret):
-        self.__key = key
-        self.__secret = base64.b64decode(secret.encode())
+        if key: self.__key = key
+        if secret: self.__secret = base64.b64decode(secret.encode())
         self.login = None
         self.created = None
         self.index = None
@@ -55,6 +57,8 @@ class Account(object):
         self.trade_fee = None
         self.orders = None
         self.wallets = None
+        if key and secret: self.logged_in = True
+        else: self.logged_in = False
 
     def __get_nonce(self):
         return int(time.time() * 1E5)
@@ -72,7 +76,28 @@ class Account(object):
         }
         return post_data, headers
 
+    def update_login_info(self, key, secret):
+        self.__key = key
+        self.__secret = base64.b64decode(secret.encode())
+        self.logged_in = True
+
+    def logout(self):
+        self.__key = None
+        self.__secret = None
+        self.login = None
+        self.created = None
+        self.index = None
+        self.last_login = None
+        self.language = None
+        self.rights = None
+        self.trade_fee = None
+        self.orders = None
+        self.wallets = None
+        self.logged_in = False
+
     def perform(self, name, **args):
+        if not self.logged_in:
+            raise AccountError('not logged in')
         url = ACCOUNT_URLS[name]
         if name in POST_DATA:
             for arg in POST_DATA[name]:
@@ -117,8 +142,13 @@ class Account(object):
         self.perform('cancel', oid=order.id, type=order.type)
 
     def update(self):
+        if not self.logged_in: return
         info = self.perform('info')
         orders = self.perform('orders')
+        if 'error' in info:
+            raise AccountError(info['error'])
+        if 'error' in orders:
+            raise AccountError(orders['error'])
         self.login = info['Login']
         self.created = self.__convert_time(info['Created'])
         self.index = info['Index']

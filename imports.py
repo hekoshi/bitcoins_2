@@ -2,7 +2,9 @@
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 import hashlib, hmac, base64, json
-import time, queue, threading, sys, os.path, os
+import time, queue, threading, sys
+import os.path, os, io
+import encrypt
 
 API_0_URL = 'https://mtgox.com/api/0/'
 API_1_URL = 'https://mtgox.com/api/1/'
@@ -29,10 +31,12 @@ COMMANDS = [
     'connect',
     'disconnect',
     'reconnect',
+    'login',
+    'logout',
 ]
 
 COMMAND_HELP = {
-    'comment':{'':['','Useful for when your comment starts with a command.']},
+    'comment':{'':['','Useful for when your comment starts with a command']},
     'quit':{'':['','Quit this application']},
     'update':{'':['[items]','Runs update'],
               'frequency':['(seconds)','Sets update frequency']},
@@ -40,10 +44,12 @@ COMMAND_HELP = {
     'help':{'':['','Prints useful help information'],
             'command':['[args]','Prints help about command']},
     'clear':{'':['','Clear messages from the log']},
-    'save':{'':['(file) [-overwrite]','save the message log to a file']},
+    'save':{'':['(file) [-overwrite] [-tstamp] [-tstampfname]','save the message log to a file']},
     'connect':{'':['[websocket/socketio]','connect to the update server']},
     'disconnect':{'':['','disconnect from the update server']},
-    'reconnect':{'':['[websocket/socketio]','reconnect to the update server']}
+    'reconnect':{'':['[websocket/socketio]','reconnect to the update server']},
+    'login':{'':['(file) (password)','login to an account, spaces are allowed in the password']},
+    'logout':{'':['','logout from an account']}
 }
 
 WEBSOCKET_CONNECTED = 0
@@ -65,6 +71,7 @@ REMARK_MESSAGE = 15
 CONNECT_REQUESTED = 16
 DISCONNECT_REQUESTED = 17
 RECONNECT_REQUESTED = 18
+API_KEY_UNLOCKED = 19
 
 BTC_FACTOR = 1E8
 USD_FACTOR = 1E5
