@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Tue Jan 17 19:16:54 2012
+# Created: Wed Jan 18 17:29:02 2012
 #      by: PyQt4 UI code generator 4.9
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,12 +18,25 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(774, 568)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
+        MainWindow.setSizePolicy(sizePolicy)
+        MainWindow.setMinimumSize(QtCore.QSize(774, 568))
+        MainWindow.setMaximumSize(QtCore.QSize(774, 568))
         self.centralwidget = QtGui.QWidget(MainWindow)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
+        self.centralwidget.setSizePolicy(sizePolicy)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayoutWidget = QtGui.QWidget(self.centralwidget)
         self.gridLayoutWidget.setGeometry(QtCore.QRect(0, 0, 773, 57))
         self.gridLayoutWidget.setObjectName(_fromUtf8("gridLayoutWidget"))
         self.gridLayout = QtGui.QGridLayout(self.gridLayoutWidget)
+        self.gridLayout.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
         self.gridLayout.setSpacing(1)
         self.gridLayout.setMargin(0)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
@@ -87,6 +100,7 @@ class Ui_MainWindow(object):
         self.layoutWidget.setGeometry(QtCore.QRect(0, 60, 771, 491))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.gridLayout_4 = QtGui.QGridLayout(self.layoutWidget)
+        self.gridLayout_4.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
         self.gridLayout_4.setContentsMargins(-1, 0, -1, -1)
         self.gridLayout_4.setVerticalSpacing(6)
         self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
@@ -94,6 +108,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setMargin(0)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
         self.tradeList = QtGui.QTreeWidget(self.layoutWidget)
+        self.tradeList.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
         self.tradeList.setObjectName(_fromUtf8("tradeList"))
         self.gridLayout_2.addWidget(self.tradeList, 1, 0, 1, 1)
         self.label_9 = QtGui.QLabel(self.layoutWidget)
@@ -103,6 +118,7 @@ class Ui_MainWindow(object):
         self.gridLayout_3 = QtGui.QGridLayout()
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
         self.depthList = QtGui.QTreeWidget(self.layoutWidget)
+        self.depthList.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
         self.depthList.setObjectName(_fromUtf8("depthList"))
         self.gridLayout_3.addWidget(self.depthList, 1, 0, 1, 1)
         self.label_10 = QtGui.QLabel(self.layoutWidget)
@@ -115,8 +131,9 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.messageList.sizePolicy().hasHeightForWidth())
         self.messageList.setSizePolicy(sizePolicy)
-        self.messageList.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.messageList.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.messageList.setAutoScrollMargin(0)
+        self.messageList.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
         self.messageList.setObjectName(_fromUtf8("messageList"))
         self.gridLayout_4.addWidget(self.messageList, 1, 0, 1, 2)
         self.commandEdit = QtGui.QLineEdit(self.layoutWidget)
@@ -145,6 +162,14 @@ class Ui_MainWindow(object):
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionQuit)
         self.menubar.addAction(self.menuFile.menuAction())
+        self.label.setBuddy(self.highEdit)
+        self.label_2.setBuddy(self.lowEdit)
+        self.label_3.setBuddy(self.lastEdit)
+        self.label_4.setBuddy(self.buyEdit)
+        self.label_5.setBuddy(self.sellEdit)
+        self.label_6.setBuddy(self.averageEdit)
+        self.label_7.setBuddy(self.vwapEdit)
+        self.label_8.setBuddy(self.volumeEdit)
 
         self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.actionQuit, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.close)

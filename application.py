@@ -27,6 +27,8 @@ class Application(object):
         self.run_thread = None
         self.gui_thread = None
         self.gui_window = None
+        self.connected = False
+        self.disconnect_event_lock = threading.Lock()
         self.quit = False
         self.empty_ticker = {'high':0,'low':0,'average':0,'vwap':0,'volume':0,'last':0,'buy':0,'sell':0}
 
@@ -47,6 +49,29 @@ class Application(object):
         self.trades.update()
         self.events += Event(TRADE_RESET)
         self.last_update = time.time()
+        self.__statusbar()
+
+    def update(self, account, ticker, depth, trades):
+        if account:
+            self.__statusbar('updating account',0)
+            self.__message('updating account')
+            self.account.update()
+            self.events += Event(ACCOUNT_UPDATED)
+        if ticker:
+            self.__statusbar('updating ticker',0)
+            self.__message('updating ticker')
+            self.ticker.update()
+            self.events += Event(TICKER_UPDATE, change=self.empty_ticker)
+        if depth:
+            self.__statusbar('updating depth',0)
+            self.__message('updating depth')
+            self.depth.update()
+            self.events += Event(RESET_DEPTH)
+        if trades:
+            self.__statusbar('updating trades',0)
+            self.__message('updating trades')
+            self.trades.update()
+            self.events += Event(TRADE_RESET)
         self.__statusbar()
 
     def __gui_thread(self):
@@ -94,17 +119,26 @@ class Application(object):
             time.sleep(1/60)
             for event in self.events:
                 if event.type == WEBSOCKET_CONNECTED:
+                    self.connected = True
                     self.__message('websocket connected')
                 elif event.type == WEBSOCKET_DISCONNECTED:
-                    self.__message('websocket disconnected, reconnecting')
-                    self.updater.connect()
+                    with self.disconnect_event_lock:
+                        if event.reconnect and self.connected:
+                            self.__message('websocket disconnected, reconnecting')
+                            self.updater.connect()
+                        else:
+                            self.__message('websocket disconnected')
+                        self.connected = False
                 elif event.type == UPDATE_THREAD_STARTED:
                     self.__message('update thread started')
+                    self.__message('type /help for a list of possible commands')
                 elif event.type == ACCOUNT_UPDATED:
                     #self.__message('Current Funds: %s %s' % (self.account.wallets['BTC'],self.account.wallets['USD']))
                     pass
                 elif event.type == CHANNEL_SUBSCRIBED:
                     self.__message('subscribed to \'%s\' channel' % CHANNELS[event.channel])
+                elif event.type == REMARK_MESSAGE:
+                    self.__message('Remark: %s' % event.message)
                 elif event.type == TICKER_UPDATE:
                     self.gui_window.emit(QtCore.SIGNAL('setTicker'),event.change)
                     self.last_ticker_color_change = time.time()
@@ -125,6 +159,35 @@ class Application(object):
                     self.full_update()
                 elif event.type == UPDATE_FREQUENCY_CHANGE:
                     self.update_frequency = event.frequency
+                elif event.type == PARTIAL_UPDATE_REQUESTED:
+                    self.update(**event.update)
+                elif event.type == CONNECT_REQUESTED:
+                    if not self.connected:
+                        self.__statusbar('connecting',0)
+                        self.__message('connecting')
+                        if event.use == 'socketio': self.updater.use_socketio = True
+                        elif event.use == 'websocket': self.updater.use_socketio = False
+                        else: self.__message('unexpected protocol, using default')
+                        self.updater.connect()
+                        self.__statusbar()
+                    else: pass
+                elif event.type == DISCONNECT_REQUESTED:
+                    if self.connected:
+                        self.__message('disconnecting')
+                        self.updater.disconnect(False)
+                    else: pass
+                elif event.type == RECONNECT_REQUESTED:
+                    if self.connected:
+                        self.__message('disconnecting')
+                        self.updater.disconnect(False)
+                        self.__statusbar('reconnecting',0)
+                        self.__message('connecting')
+                        if event.use == 'socketio': self.updater.use_socketio = True
+                        elif event.use == 'websocket': self.updater.use_socketio = False
+                        else: self.__message('unexpected protocol, using default')
+                        self.updater.connect()
+                        self.__statusbar()
+                    else: pass
 
             self.full_update()
             if self.last_ticker_color_change is not None:

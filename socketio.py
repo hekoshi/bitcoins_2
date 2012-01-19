@@ -16,8 +16,10 @@ class SocketIO(object):
 
     def __keepalive(self):
         while self.connected:
+            try: self.websocket.send(b'2::')
+            except WebSocketError: self.connected = False; return
+            except AttributeError: self.connected = False; return
             time.sleep(self.heartbeat_interval)
-            self.websocket.send(b'2::')
 
     def connect(self):
         request = urlopen('https://' + self.host + '/1')
@@ -34,6 +36,15 @@ class SocketIO(object):
         self.keepalive_thread = threading.Thread(target=self.__keepalive)
         self.keepalive_thread.setDaemon(True)
         self.keepalive_thread.start()
+
+    def close(self, hard=False):
+        self.connected = False
+        self.websocket.close(hard)
+        self.websocket = None
+        self.keepalive_thread.join()
+        self.keepalive_thread = None
+        self.id = None
+        self.heartbeat_interval = None
 
     def send(self, data):
         assert(isinstance(data, bytes))

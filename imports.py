@@ -10,6 +10,7 @@ DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 SOCKETIO_URL = 'socketio.mtgox.com/socket.io'
 SOCKETIO_PATH = '/mtgox'
 WEBSOCKET_URL = 'ws://websocket.mtgox.com/mtgox'
+USE_SOCKETIO = True
 
 CHANNELS = {
     'dbf1dee9-4f2e-4a08-8cb7-748919a71b21': 'trades',
@@ -25,18 +26,24 @@ COMMANDS = [
     'clear',
     'save',
     'help',
+    'connect',
+    'disconnect',
+    'reconnect',
 ]
 
 COMMAND_HELP = {
     'comment':{'':['','Useful for when your comment starts with a command.']},
     'quit':{'':['','Quit this application']},
-    'update':{'':['','Runs full update'],
+    'update':{'':['[items]','Runs update'],
               'frequency':['(seconds)','Sets update frequency']},
     'account':{'info':['','Returns account information']},
     'help':{'':['','Prints useful help information'],
             'command':['[args]','Prints help about command']},
     'clear':{'':['','Clear messages from the log']},
-    'save':{'':['(file) [-overwrite]','save the message log to a file']}
+    'save':{'':['(file) [-overwrite]','save the message log to a file']},
+    'connect':{'':['[websocket/socketio]','connect to the update server']},
+    'disconnect':{'':['','disconnect from the update server']},
+    'reconnect':{'':['[websocket/socketio]','reconnect to the update server']}
 }
 
 WEBSOCKET_CONNECTED = 0
@@ -53,6 +60,11 @@ TRADE_RESET = 10
 FULL_UPDATE_REQUESTED = 11
 RESET_DEPTH = 12
 UPDATE_FREQUENCY_CHANGE = 13
+PARTIAL_UPDATE_REQUESTED = 14
+REMARK_MESSAGE = 15
+CONNECT_REQUESTED = 16
+DISCONNECT_REQUESTED = 17
+RECONNECT_REQUESTED = 18
 
 BTC_FACTOR = 1E8
 USD_FACTOR = 1E5

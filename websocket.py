@@ -348,10 +348,16 @@ class WebSocket(object):
         self.socket.send(data)
         self.socket.send(b'\xff')
 
-    def close(self):
+    def close(self, hard=False):
         """ Closes the websocket -> None """
         if self.closing: return
         if self.socket is None: self.__fail("not connected")
+        if hard:
+            # because fuck the rules.
+            self.socket.close()
+            self.socket = None
+            self.connected = False
+            return
         self.closing = True
         self.socket.send(b'\xff')
         self.socket.send(b'\x00')

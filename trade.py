@@ -50,6 +50,9 @@ class Trades(object):
     def __iter__(self):
         return iter(self.trades)
 
+    def __getitem__(self, y):
+        return self.trades[y]
+
     def update(self):
         with self.__update_lock:
             req = urlopen(API_1_URL+URLS['trades'])

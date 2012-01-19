@@ -117,7 +117,7 @@ class Window(QtGui.QMainWindow):
 
     def resetTrades(self):
         self.ui.tradeList.clear()
-        for trade in self.trades:
+        for trade in self.trades[:100]:
             if trade.currency == 'USD':
                 QtGui.QTreeWidgetItem(self.ui.tradeList, [trade.type,str(trade.price),str(trade.amount)])
         while self.ui.tradeList.topLevelItemCount() > 100:

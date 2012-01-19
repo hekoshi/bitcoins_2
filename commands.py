@@ -32,8 +32,29 @@ class Commands(object):
     def quit_command(self, args):
         self.window.close()
 
-    def clear_command(self,args):
+    def clear_command(self, args):
         self.window.emit(QtCore.SIGNAL('clearMessages'))
+
+    def connect_command(self, args):
+        if len(args):
+            use = args[0]
+        elif USE_SOCKETIO:
+            use = 'socketio'
+        else:
+            use = 'websocket'
+        self.events += Event(CONNECT_REQUESTED, use=use)
+
+    def disconnect_command(self, args):
+        self.events += Event(DISCONNECT_REQUESTED)
+
+    def reconnect_command(self, args):
+        if len(args):
+            use = args[0]
+        elif USE_SOCKETIO:
+            use = 'socketio'
+        else:
+            use = 'websocket'
+        self.events += Event(RECONNECT_REQUESTED, use=use)
 
     def help_command(self, args):
         if not args:
@@ -74,6 +95,21 @@ class Commands(object):
             if frequency < 1: self.message('/update: Update frequency must be at least 1'); return
             self.events += Event(UPDATE_FREQUENCY_CHANGE, frequency=frequency)
             self.message('/update: Update frequency set to %s seconds' % frequency)
+        else:
+            updates = {}
+            if 'account' in args:
+                updates['account'] = True
+            else: updates['account'] = False
+            if 'ticker' in args:
+                updates['ticker'] = True
+            else: updates['ticker'] = False
+            if 'depth' in args:
+                updates['depth'] = True
+            else: updates['depth'] = False
+            if 'trades' in args:
+                updates['trades'] = True
+            else: updates['trades'] = False
+            self.events += Event(PARTIAL_UPDATE_REQUESTED, update=updates)
 
     def account_command(self, args):
         if args[0] == 'info':
