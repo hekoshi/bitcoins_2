@@ -56,6 +56,30 @@ class Commands(object):
             use = 'websocket'
         self.events += Event(RECONNECT_REQUESTED, use=use)
 
+    def login_command(self, args):
+        if not len(args):
+            self.message('/login: no file provided')
+            return
+        elif len(args) < 2:
+            self.message('/login: no password provided')
+        key = ' '.join(args[1:])
+        in_data = open(args[0],'rb').read().decode()
+        output = encrypt.decodes(key,in_data)
+        try:
+            data = json.loads(output)
+        except ValueError:
+            self.message('/login: incorrect password or corrupt file')
+        else:
+            if 'key' not in data or 'secret' not in data:
+                self.message('/login: incorrect file')
+                return
+            self.message('/login: account key unlocked')
+            self.events += Event(API_KEY_UNLOCKED, key=data['key'], secret=data['secret'])
+
+    def logout_command(self, args):
+        self.message('/logout: logging out')
+        self.account.logout()
+
     def help_command(self, args):
         if not args:
             for command in COMMAND_HELP:
@@ -127,15 +151,36 @@ class Commands(object):
 
     def save_command(self, args):
         if not args: self.message('/save: no file specified'); return
-        if os.path.exists(args[0]) and '-overwrite' not in args:
+        overwrite = False
+        tstamp = False
+        tstampfname = False
+        if '-overwrite' in args:
+            overwrite = True
+            args.remove('-overwrite')
+        if '-tstamp' in args:
+            tstamp = True
+            args.remove('-tstamp')
+            self.message('/save: adding timestamp to file')
+        if '-tstampfname' in args:
+            tstampfname = True
+            args.remove('-tstampfname')
+            self.message('/save: adding timestamp to filename')
+        path = args[0]
+        head, tail = os.path.split(path)
+        root, ext = os.path.splitext(tail)
+        if tstampfname:
+            root += (' %s' % time.strftime('%x')).replace(os.sep,'.')
+        path = head+root+ext
+        if os.path.exists(path) and not overwrite:
             self.message('/save: file already exists, use -overwrite to overwrite')
             return
-        elif '-overwrite' in args:
-            args.remove('-overwrite')
-            self.message('/save: overwriting file \'%s\'' % args[0])
+        elif overwrite:
+            self.message('/save: overwriting file \'%s\'' % path)
         else:
-            self.message('/save: writing to file \'%s\'' % args[0])
-        logfile = open(args[0],'w')
+            self.message('/save: writing to file \'%s\'' % path)
+        logfile = open(path,'w')
+        if tstamp:
+            logfile.write(time.asctime(time.localtime())+'\n\n')
         for line in self.window.messages:
             logfile.write(line+'\n')
         logfile.close()
