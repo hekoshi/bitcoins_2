@@ -1,6 +1,0 @@
-#!/usr/bin/env python3
-from imports import *
-
-class Commands(object):
-    def __init__(self, account, events, ticker, trades, depth, commands=COMMANDS):
-        
