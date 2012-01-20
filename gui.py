@@ -53,6 +53,7 @@ class Window(QtGui.QMainWindow):
 
     def commandAction(self):
         command = self.ui.commandEdit.text()
+        if not command: return
         if command[0] != '/':
             self.addMessage('Comment: %s' % command)
             self.ui.commandEdit.clear()
@@ -117,7 +118,7 @@ class Window(QtGui.QMainWindow):
 
     def resetTrades(self):
         self.ui.tradeList.clear()
-        for trade in self.trades[:100]:
+        for trade in self.trades[-100:]:
             if trade.currency == 'USD':
                 QtGui.QTreeWidgetItem(self.ui.tradeList, [trade.type,str(trade.price),str(trade.amount)])
         while self.ui.tradeList.topLevelItemCount() > 100:

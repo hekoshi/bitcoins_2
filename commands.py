@@ -80,6 +80,46 @@ class Commands(object):
         self.message('/logout: logging out')
         self.account.logout()
 
+    def trade_command(self, args):
+        if not self.account.logged_in:
+            self.message('/trade: account not logged in')
+            return
+        if len(args):
+            if args[0] == 'cancel':
+                if len(args) < 2:
+                    self.message('/trade: incorrect arguments')
+                    return
+                orders = [int(x) for x in args[1:]]
+                for order in orders:
+                    if order >= len(self.account.orders):
+                        self.message('/trade: incorrect order number')
+                    else:
+                        self.message('/trade: canceling order %s' % self.account.orders[order])
+                        self.account.cancel(self.account.orders[order])
+                return
+        if len(args) < 2 or len(args) > 3:
+            self.message('/trade: incorrect arguments')
+            return
+        trade_type = args[0]
+        if trade_type  not in ('buy', 'sell'):
+            self.message('/trade: incorrect trade type')
+            return
+        amount = args[1]
+        if len(args) > 2: price = args[2]
+        else:
+            self.message('/trade: doing market order')
+            price = None
+        self.message('/trade: placing order')
+        if trade_type == 'sell':
+            success, status, oid = self.account.sell(amount,price)
+        elif trade_type == 'buy':
+            success, status, oid = self.account.buy(amount,price)
+        if success:
+            self.message('/trade: order placed')
+            self.events += Event(ORDER_PLACED, oid=oid)
+        else:
+            self.message('/trade: order failed')
+
     def help_command(self, args):
         if not args:
             for command in COMMAND_HELP:

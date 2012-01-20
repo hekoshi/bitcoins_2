@@ -200,6 +200,13 @@ class Application(object):
                     except AccountError as e: self.__message('account update failed: %s' % e)
                     else: self.events += Event(ACCOUNT_UPDATED)
                     self.__statusbar()
+                elif event.type == ORDER_PLACED:
+                    self.__message('updating account')
+                    self.__statusbar('updating account',0)
+                    try: self.account.update()
+                    except AccountError as e: self.__message('account update failed: %s' % e)
+                    else: self.events += Event(ACCOUNT_UPDATED)
+                    self.__statusbar()
 
             self.full_update()
             if self.last_ticker_color_change is not None:

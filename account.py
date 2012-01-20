@@ -128,15 +128,23 @@ class Account(object):
 
     def sell(self, amount, price=None, currency='USD'):
         if price is None:
-            self.perform('sell', amount=amount, Currency=currency)
+            out = self.perform('sell', amount=amount, Currency=currency)
         else:
-            self.perform('sell', amount=amount, price=price, Currency=currency)
+            out = self.perform('sell', amount=amount, price=price, Currency=currency)
+        if 'error' in out:
+            return False, None, None
+        self.orders = [Order(**order) for order in out['orders']]
+        return True,out['status'],out['oid']
 
     def buy(self, amount, price=None, currency='USD'):
         if price is None:
-            self.perform('buy', amount=amount, Currency=currency)
+            out = self.perform('buy', amount=amount, Currency=currency)
         else:
-            self.perform('buy', amount=amount, price=price, Currency=currency)
+            out = self.perform('buy', amount=amount, price=price, Currency=currency)
+        if 'error' in out:
+            return False, None, None
+        self.orders = [Order(**order) for order in out['orders']]
+        return True,out['status'],out['oid']
 
     def cancel(self, order):
         self.perform('cancel', oid=order.id, type=order.type)

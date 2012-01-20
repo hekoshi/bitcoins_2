@@ -57,6 +57,7 @@ class Trades(object):
         with self.__update_lock:
             req = urlopen(API_1_URL+URLS['trades'])
             data = json.loads(req.read().decode())
+            self.trades = []
             for trade in data:
                 self.trades.append(Trade(**trade))
             self.trades.sort()

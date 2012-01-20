@@ -33,6 +33,7 @@ COMMANDS = [
     'reconnect',
     'login',
     'logout',
+    'trade',
 ]
 
 COMMAND_HELP = {
@@ -49,7 +50,9 @@ COMMAND_HELP = {
     'disconnect':{'':['','disconnect from the update server']},
     'reconnect':{'':['[websocket/socketio]','reconnect to the update server']},
     'login':{'':['(file) (password)','login to an account, spaces are allowed in the password']},
-    'logout':{'':['','logout from an account']}
+    'logout':{'':['','logout from an account']},
+    'trade':{'':['(type) (amount) [price]','place order (ommit price to do a market order)'],
+             'cancel':['(orders)','cancel one or more orders']}
 }
 
 WEBSOCKET_CONNECTED = 0
@@ -72,6 +75,8 @@ CONNECT_REQUESTED = 16
 DISCONNECT_REQUESTED = 17
 RECONNECT_REQUESTED = 18
 API_KEY_UNLOCKED = 19
+ORDER_PLACED = 20
+TRADE_PERFORMED = 21
 
 BTC_FACTOR = 1E8
 USD_FACTOR = 1E5
