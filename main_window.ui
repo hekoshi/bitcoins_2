@@ -355,7 +355,7 @@
      <addaction name="actionUpdate_AllAccount"/>
      <addaction name="separator"/>
      <addaction name="actionUpdate_History"/>
-     <addaction name="actioUpdate_Funds"/>
+     <addaction name="actionUpdate_Funds"/>
      <addaction name="actionUpdate_Orders"/>
     </widget>
     <widget class="QMenu" name="menuLog">
@@ -365,6 +365,7 @@
      <addaction name="actionLogInfo"/>
      <addaction name="actionLogHistory"/>
      <addaction name="actionLogOrders"/>
+     <addaction name="actionLogFunds"/>
     </widget>
     <addaction name="actionLogin"/>
     <addaction name="actionLogout"/>
@@ -391,19 +392,19 @@
      <property name="title">
       <string>Reconnect</string>
      </property>
-     <addaction name="actionCurrent"/>
+     <addaction name="actionReconnectCurrent"/>
      <addaction name="separator"/>
-     <addaction name="actionWebSocket"/>
-     <addaction name="actionSocket_IO"/>
+     <addaction name="actionReconnectWebSocket"/>
+     <addaction name="actionReconnectSocket_IO"/>
     </widget>
     <widget class="QMenu" name="menuConnect">
      <property name="title">
       <string>Connect</string>
      </property>
-     <addaction name="actionReconnectCurrent"/>
+     <addaction name="actionConnectCurrent"/>
      <addaction name="separator"/>
-     <addaction name="actionReconnectWebSocket"/>
-     <addaction name="actionReconnectSocket_IO"/>
+     <addaction name="actionConnectWebSocket"/>
+     <addaction name="actionConnectSocket_IO"/>
     </widget>
     <addaction name="menuConnect"/>
     <addaction name="menuReconnect"/>
@@ -472,7 +473,7 @@
     <string>Orders</string>
    </property>
   </action>
-  <action name="actioUpdate_Funds">
+  <action name="actionUpdate_Funds">
    <property name="text">
     <string>Funds</string>
    </property>
@@ -512,26 +513,6 @@
     <string>Auto Trade</string>
    </property>
   </action>
-  <action name="actionCurrent">
-   <property name="text">
-    <string>Current</string>
-   </property>
-  </action>
-  <action name="actionWebSocket">
-   <property name="text">
-    <string>WebSocket</string>
-   </property>
-  </action>
-  <action name="actionSocket_IO">
-   <property name="text">
-    <string>Socket.IO</string>
-   </property>
-  </action>
-  <action name="actionDisconnect">
-   <property name="text">
-    <string>Disconnect</string>
-   </property>
-  </action>
   <action name="actionReconnectCurrent">
    <property name="text">
     <string>Current</string>
@@ -543,6 +524,26 @@
    </property>
   </action>
   <action name="actionReconnectSocket_IO">
+   <property name="text">
+    <string>Socket.IO</string>
+   </property>
+  </action>
+  <action name="actionDisconnect">
+   <property name="text">
+    <string>Disconnect</string>
+   </property>
+  </action>
+  <action name="actionConnectCurrent">
+   <property name="text">
+    <string>Current</string>
+   </property>
+  </action>
+  <action name="actionConnectWebSocket">
+   <property name="text">
+    <string>WebSocket</string>
+   </property>
+  </action>
+  <action name="actionConnectSocket_IO">
    <property name="text">
     <string>Socket.IO</string>
    </property>
@@ -605,6 +606,11 @@
   <action name="actionCancel_Order">
    <property name="text">
     <string>Cancel Order</string>
+   </property>
+  </action>
+  <action name="actionLogFunds">
+   <property name="text">
+    <string>Funds</string>
    </property>
   </action>
  </widget>

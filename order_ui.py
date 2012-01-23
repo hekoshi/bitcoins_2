@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'order.ui'
 #
-# Created: Sun Jan 22 15:50:43 2012
+# Created: Sun Jan 22 19:29:58 2012
 #      by: PyQt4 UI code generator 4.9
 #
 # WARNING! All changes made in this file will be lost!
@@ -19,7 +19,7 @@ class Ui_Dialog(object):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.resize(400, 273)
         self.formLayoutWidget = QtGui.QWidget(Dialog)
-        self.formLayoutWidget.setGeometry(QtCore.QRect(10, 9, 381, 258))
+        self.formLayoutWidget.setGeometry(QtCore.QRect(10, 9, 381, 284))
         self.formLayoutWidget.setObjectName(_fromUtf8("formLayoutWidget"))
         self.formLayout = QtGui.QFormLayout(self.formLayoutWidget)
         self.formLayout.setMargin(0)
@@ -57,10 +57,14 @@ class Ui_Dialog(object):
         self.priceSpinBox.setDecimals(5)
         self.priceSpinBox.setObjectName(_fromUtf8("priceSpinBox"))
         self.verticalLayout_2.addWidget(self.priceSpinBox)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
         self.marketOrderBox = QtGui.QCheckBox(self.formLayoutWidget)
-        self.marketOrderBox.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.marketOrderBox.setObjectName(_fromUtf8("marketOrderBox"))
-        self.verticalLayout_2.addWidget(self.marketOrderBox)
+        self.horizontalLayout_2.addWidget(self.marketOrderBox)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
         self.formLayout.setLayout(3, QtGui.QFormLayout.FieldRole, self.verticalLayout_2)
         self.label_4 = QtGui.QLabel(self.formLayoutWidget)
         self.label_4.setObjectName(_fromUtf8("label_4"))
@@ -92,7 +96,8 @@ class Ui_Dialog(object):
         self.callSlider.setOrientation(QtCore.Qt.Horizontal)
         self.callSlider.setInvertedAppearance(False)
         self.callSlider.setInvertedControls(False)
-        self.callSlider.setTickPosition(QtGui.QSlider.NoTicks)
+        self.callSlider.setTickPosition(QtGui.QSlider.TicksBelow)
+        self.callSlider.setTickInterval(50)
         self.callSlider.setObjectName(_fromUtf8("callSlider"))
         self.horizontalLayout.addWidget(self.callSlider)
         self.label_6 = QtGui.QLabel(self.formLayoutWidget)

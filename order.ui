@@ -19,7 +19,7 @@
      <x>10</x>
      <y>9</y>
      <width>381</width>
-     <height>258</height>
+     <height>284</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout">
@@ -88,14 +88,28 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="marketOrderBox">
-        <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
-        </property>
-        <property name="text">
-         <string>Market Order</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="marketOrderBox">
+          <property name="text">
+           <string>Market Order</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
@@ -169,7 +183,10 @@
          <bool>false</bool>
         </property>
         <property name="tickPosition">
-         <enum>QSlider::NoTicks</enum>
+         <enum>QSlider::TicksBelow</enum>
+        </property>
+        <property name="tickInterval">
+         <number>50</number>
         </property>
        </widget>
       </item>
@@ -226,12 +243,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>242</x>
-     <y>145</y>
+     <x>326</x>
+     <y>188</y>
     </hint>
     <hint type="destinationlabel">
-     <x>242</x>
-     <y>115</y>
+     <x>244</x>
+     <y>157</y>
     </hint>
    </hints>
   </connection>

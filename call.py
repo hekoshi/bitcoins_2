@@ -15,5 +15,5 @@ class Caller(object):
             else: return (self.ticker['last']/self.ticker['vwap'])-1
         elif self.ticker['last'] < self.ticker['vwap']:
             if (self.ticker['vwap']/self.ticker['last'])-1 > 1: return -1
-            else: return -((self.ticker['last']/self.ticker['vwap'])-1)
+            else: return -((self.ticker['vwap']/self.ticker['last'])-1)
         else: return 0

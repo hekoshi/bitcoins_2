@@ -35,6 +35,7 @@ class OrderDialog(QtGui.QDialog):
         self.ignore_amount_change = 0
         self.ui.marketOrderBox.setChecked(True)
         self.connect(self.ui.orderGroup, QtCore.SIGNAL('buttonClicked(int)'), self.update_price_box)
+        self.connect(self.ui.marketOrderBox, QtCore.SIGNAL('clicked()'), self.update_price_box)
         self.connect(self.ui.totalSpinBox, QtCore.SIGNAL('valueChanged(double)'), self.total_change)
         self.connect(self.ui.amountSpinBox, QtCore.SIGNAL('valueChanged(double)'), self.amount_change)
         self.connect(self.ui.priceSpinBox, QtCore.SIGNAL('valueChanged(double)'), self.price_change)
@@ -213,6 +214,66 @@ class Window(QtGui.QMainWindow):
         self.connect(self.ui.actionCall, QtCore.SIGNAL('triggered()'), self.call)
         self.connect(self.ui.actionAuto_Trade, QtCore.SIGNAL('triggered()'), self.auto_trade)
         self.connect(self.ui.actionCancel_Order, QtCore.SIGNAL('triggered()'), self.cancel_order_dialog.show)
+        self.connect(self.ui.actionUpdate_AllAccount, QtCore.SIGNAL('triggered()'), self.update_all_account)
+        self.connect(self.ui.actionUpdate_History, QtCore.SIGNAL('triggered()'), self.update_history_account)
+        self.connect(self.ui.actionUpdate_Funds, QtCore.SIGNAL('triggered()'), self.update_funds_account)
+        self.connect(self.ui.actionUpdate_Orders, QtCore.SIGNAL('triggered()'), self.update_orders_account)
+        self.connect(self.ui.actionLogInfo, QtCore.SIGNAL('triggered()'), self.log_account_info)
+        self.connect(self.ui.actionLogHistory, QtCore.SIGNAL('triggered()'), self.log_account_history)
+        self.connect(self.ui.actionLogOrders, QtCore.SIGNAL('triggered()'), self.log_account_orders)
+        self.connect(self.ui.actionLogFunds, QtCore.SIGNAL('triggered()'), self.log_account_funds)
+        self.connect(self.ui.actionDisconnect, QtCore.SIGNAL('triggered()'), self.disconnect)
+        self.connect(self.ui.actionConnectCurrent, QtCore.SIGNAL('triggered()'), self.connect_current)
+        self.connect(self.ui.actionConnectWebSocket, QtCore.SIGNAL('triggered()'), self.connect_websocket)
+        self.connect(self.ui.actionConnectSocket_IO, QtCore.SIGNAL('triggered()'), self.connect_socketio)
+        self.connect(self.ui.actionReconnectCurrent, QtCore.SIGNAL('triggered()'), self.reconnect_current)
+        self.connect(self.ui.actionReconnectWebSocket, QtCore.SIGNAL('triggered()'), self.reconnect_websocket)
+        self.connect(self.ui.actionReconnectSocket_IO, QtCore.SIGNAL('triggered()'), self.reconnect_socketio)
+
+    def reconnect_socketio(self):
+        self.commands.reconnect_command(['socketio'])
+
+    def reconnect_websocket(self):
+        self.commands.reconnect_command(['websocket'])
+
+    def reconnect_current(self):
+        self.commands.reconnect_command([])
+
+    def connect_socketio(self):
+        self.commands.connect_command(['socketio'])
+
+    def connect_websocket(self):
+        self.commands.connect_command(['websocket'])
+
+    def connect_current(self):
+        self.commands.connect_command([])
+
+    def disconnect(self):
+        self.commands.disconnect_command([])
+
+    def log_account_funds(self):
+        self.commands.account_command(['funds'])
+
+    def log_account_orders(self):
+        self.commands.account_command(['orders'])
+
+    def log_account_history(self):
+        self.commands.account_command(['history'])
+
+    def log_account_info(self):
+        self.commands.account_command(['info'])
+
+    def update_orders_account(self):
+        self.commands.account_command(['update','orders'])
+
+    def update_funds_account(self):
+        self.commands.account_command(['update','funds'])
+
+    def update_history_account(self):
+        self.commands.account_command(['update','history'])
+
+    def update_all_account(self):
+        self.commands.account_command(['update'])
 
     def cancel_order(self):
         index = self.cancel_order_dialog.ui.orderList.currentRow()
