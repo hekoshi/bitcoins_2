@@ -7,6 +7,7 @@ from live import *
 from events import *
 from gui import *
 from commands import *
+from call import *
 
 class Application(object):
     def __init__(self):
@@ -14,13 +15,14 @@ class Application(object):
         self.ticker = Ticker()
         self.depth = Depth()
         self.trades = Trades()
-        self.account = Account(None,None)
+        self.account = Account(self.events,None,None)
+        self.caller = Caller(self.events, self.account, self.ticker, self.depth, self.trades)
         self.updater = Updater(self.events, self.ticker, self.depth, self.trades)
-        self.commands = Commands(self.events, self.account, self.ticker, self.trades, self.depth)
-        self.update_frequency = 300
+        self.commands = Commands(self.events, self.caller, self.account, self.ticker, self.trades, self.depth)
+        self.update_frequency = UPDATE_FREQUENCY
         self.last_update = 0
         self.last_ticker_color_change = None
-        self.ticker_color_seconds = 1
+        self.ticker_color_seconds = TICKER_COLOR_SECONDS
         self.run_thread = None
         self.gui_thread = None
         self.gui_window = None
@@ -39,7 +41,7 @@ class Application(object):
             except AccountError as e: self.__message('account update failed: %s' % e)
             else: self.events += Event(ACCOUNT_UPDATED)
         else:
-            self.__message('Account not logged in, log in with /login (file) (password)')
+            self.__message('Account not logged in, log in with /login (password)')
         self.__statusbar('running full update (ticker)',0)
         self.ticker.update()
         self.events += Event(TICKER_UPDATE, change=self.empty_ticker)
@@ -60,7 +62,7 @@ class Application(object):
             except AccountError as e: self.__message('account update failed: %s' % e)
             else: self.events += Event(ACCOUNT_UPDATED)
         elif not self.account.logged_in:
-            self.__message('Account not logged in, log in with /login (file) (password)')
+            self.__message('Account not logged in, log in with /login (password)')
         if ticker:
             self.__statusbar('updating ticker',0)
             self.__message('updating ticker')
@@ -80,7 +82,7 @@ class Application(object):
 
     def __gui_thread(self):
         app = QtGui.QApplication(sys.argv)
-        self.gui_window = Window(self.events,self.commands,self.ticker,self.depth,self.trades)
+        self.gui_window = Window(self.events,self.caller,self.account,self.commands,self.ticker,self.depth,self.trades)
         self.gui_window.show()
         self.commands.set_window(self.gui_window)
         self.events += Event(GUI_STARTED)
@@ -112,6 +114,7 @@ class Application(object):
 
     def __run(self):
         self.__wait_for_gui()
+        self.gui_window.emit(QtCore.SIGNAL('setPreferences'),self.update_frequency)
         self.__message('type /help for a list of possible commands')
         self.__statusbar('starting', 0)
         self.__message('starting')
@@ -137,14 +140,14 @@ class Application(object):
                 elif event.type == UPDATE_THREAD_STARTED:
                     self.__message('update thread started')
                 elif event.type == ACCOUNT_UPDATED:
-                    #self.__message('Current Funds: %s %s' % (self.account.wallets['BTC'],self.account.wallets['USD']))
-                    pass
+                    self.gui_window.emit(QtCore.SIGNAL('setOrderList'))
                 elif event.type == CHANNEL_SUBSCRIBED:
                     self.__message('subscribed to \'%s\' channel' % CHANNELS[event.channel])
                 elif event.type == REMARK_MESSAGE:
                     self.__message('Remark: %s' % event.message)
                 elif event.type == TICKER_UPDATE:
                     self.gui_window.emit(QtCore.SIGNAL('setTicker'),event.change)
+                    self.gui_window.emit(QtCore.SIGNAL('setOrderPrice'))
                     self.last_ticker_color_change = time.time()
                 elif event.type == TRADE_UPDATE:
                     self.gui_window.emit(QtCore.SIGNAL('addTrade'),event.trade)
@@ -163,6 +166,7 @@ class Application(object):
                     self.full_update()
                 elif event.type == UPDATE_FREQUENCY_CHANGE:
                     self.update_frequency = event.frequency
+                    self.gui_window.emit(QtCore.SIGNAL('setPreferences'),self.update_frequency)
                 elif event.type == PARTIAL_UPDATE_REQUESTED:
                     self.update(**event.update)
                 elif event.type == CONNECT_REQUESTED:
@@ -207,6 +211,39 @@ class Application(object):
                     except AccountError as e: self.__message('account update failed: %s' % e)
                     else: self.events += Event(ACCOUNT_UPDATED)
                     self.__statusbar()
+                elif event.type == TRADE_PERFORMED:
+                    self.__message('Trade performed: %s %s at %s %s' % (event.order.amount,event.order.item,
+                                                                        event.order.price,event.order.currency))
+                elif event.type == ACCOUNT_UPDATE_REQUESTED:
+                    if event.full:
+                        self.__message('updating account')
+                        self.__statusbar('updating account',0)
+                        try: self.account.update()
+                        except AccountError as e: self.__message('account update failed: %s' % e)
+                        else: self.events += Event(ACCOUNT_UPDATED)
+                        self.__statusbar()
+                    else:
+                        if event.funds:
+                            self.__message('updating account funds')
+                            self.__statusbar('updating account funds')
+                            try: self.account.update_funds()
+                            except AccountError as e: self.__message('account update failed: %s' % e)
+                            else: self.events += Event(ACCOUNT_UPDATED)
+                            self.__statusbar()
+                        if event.orders:
+                            self.__message('updating account orders')
+                            self.__statusbar('updating account orders')
+                            try: self.account.update_funds()
+                            except AccountError as e: self.__message('account update failed: %s' % e)
+                            else: self.events += Event(ACCOUNT_UPDATED)
+                            self.__statusbar()
+                        if event.history:
+                            self.__message('updating account history')
+                            self.__statusbar('updating account history')
+                            try: self.account.update_funds()
+                            except AccountError as e: self.__message('account update failed: %s' % e)
+                            else: self.events += Event(ACCOUNT_UPDATED)
+                            self.__statusbar()
 
             self.full_update()
             if self.last_ticker_color_change is not None:

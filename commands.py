@@ -4,7 +4,7 @@ from events import *
 from gui import *
 
 class Commands(object):
-    def __init__(self, events, account, ticker, trades,  depth, commands=COMMANDS):
+    def __init__(self, events, caller, account, ticker, trades,  depth, commands=COMMANDS):
         self.events = events
         self.account = account
         self.window = None
@@ -12,6 +12,7 @@ class Commands(object):
         self.trades = trades
         self.depth = depth
         self.commands = commands
+        self.caller = caller
 
     def set_window(self, window):
         self.window = window
@@ -58,12 +59,13 @@ class Commands(object):
 
     def login_command(self, args):
         if not len(args):
-            self.message('/login: no file provided')
-            return
-        elif len(args) < 2:
             self.message('/login: no password provided')
-        key = ' '.join(args[1:])
-        in_data = open(args[0],'rb').read().decode()
+            return
+        if not os.path.exists(LOGIN_INFO_FILE):
+            self.message('/login: no login information')
+            return
+        key = ' '.join(args)
+        in_data = open(LOGIN_INFO_FILE,'rb').read().decode()
         output = encrypt.decodes(key,in_data)
         try:
             data = json.loads(output)
@@ -176,7 +178,9 @@ class Commands(object):
             self.events += Event(PARTIAL_UPDATE_REQUESTED, update=updates)
 
     def account_command(self, args):
-        if args[0] == 'info':
+        if not self.account.logged_in:
+            self.message('/account: not logged in')
+        elif args[0] == 'info':
             messages = []
             messages.append('Login Name: %s' % self.account.login)
             messages.append('Login Created: %s' % time.asctime(time.gmtime(self.account.created)))
@@ -188,6 +192,54 @@ class Commands(object):
             messages.append('Funds: %s' % ' '.join([' '.join([str(self.account.wallets[x].balance), x]) for x in self.account.wallets]))
             for message in messages:
                 self.message(message)
+        elif args[0] == 'orders':
+            if not self.account.orders:
+                self.message('/account: no orders known')
+                return
+            for order in self.account.orders:
+                self.message(str(order))
+        elif args[0] == 'history':
+            usd_history, btc_history = (True,True)
+            if len(args) > 1:
+                usd_history, btc_history = (False, False)
+                if args[1].lower() == 'usd': usd_history = True
+                elif args[1].lower() == 'btc': btc_history = True
+                else: self.message('/account: incorrect history currency'); return
+            if len(args) > 2:
+                if args[2].lower() == 'usd': usd_history = True
+                elif args[2].lower() == 'btc': btc_history = True
+                else: self.message('/account: incorrect history currency'); return
+            if btc_history:
+                self.message('BTC History:')
+                for item in self.account.history_btc:
+                    self.message(str(item))
+            if usd_history:
+                self.message('USD History:')
+                for item in self.account.history_usd:
+                    self.message(str(item))
+        elif args[0] == 'funds':
+            self.message('Account Funds: %s' % ' '.join([' '.join([str(self.account.wallets[x].balance), x]) for x in self.account.wallets]))
+        elif args[0] == 'update':
+            full,funds,orders,history = (True,False,False,False)
+            if len(args) > 1:
+                full = False
+                if args[1] == 'funds': funds = True
+                elif args[1] == 'orders': orders = True
+                elif args[1] == 'history': history = True
+                else: self.message('/account: incorrect update name'); return
+            if len(args) > 2:
+                if args[2] == 'funds': funds = True
+                elif args[2] == 'orders': orders = True
+                elif args[2] == 'history': history = True
+                else: self.message('/account: incorrect update name'); return
+            if len(args) > 3:
+                if args[3] == 'funds': funds = True
+                elif args[3] == 'orders': orders = True
+                elif args[3] == 'history': history = True
+                else: self.message('/account: incorrect update name'); return
+            if funds and orders and history:
+                full,funds,orders,history = (True,False,False,False)
+            self.events += Event(ACCOUNT_UPDATE_REQUESTED, full=full, funds=funds, orders=orders, history=history)
 
     def save_command(self, args):
         if not args: self.message('/save: no file specified'); return
@@ -210,7 +262,8 @@ class Commands(object):
         root, ext = os.path.splitext(tail)
         if tstampfname:
             root += (' %s' % time.strftime('%x')).replace(os.sep,'.')
-        path = head+root+ext
+        if head: path = head+os.sep+root+ext
+        else: path = head+root+ext
         if os.path.exists(path) and not overwrite:
             self.message('/save: file already exists, use -overwrite to overwrite')
             return
@@ -225,3 +278,12 @@ class Commands(object):
             logfile.write(line+'\n')
         logfile.close()
         self.message('/save: wrote file')
+
+    def call_command(self, args):
+        call = self.caller.make_call()
+        if call > 0:
+            self.message('/call: current call is buy')
+        elif call < 0:
+            self.message('/call: current call is sell')
+        else:
+            self.message('/call: current call is mixed')

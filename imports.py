@@ -13,6 +13,9 @@ SOCKETIO_URL = 'socketio.mtgox.com/socket.io'
 SOCKETIO_PATH = '/mtgox'
 WEBSOCKET_URL = 'ws://websocket.mtgox.com/mtgox'
 USE_SOCKETIO = True
+LOGIN_INFO_FILE = 'login_info.enc'
+UPDATE_FREQUENCY = 600
+TICKER_COLOR_SECONDS = 1
 
 CHANNELS = {
     'dbf1dee9-4f2e-4a08-8cb7-748919a71b21': 'trades',
@@ -34,6 +37,7 @@ COMMANDS = [
     'login',
     'logout',
     'trade',
+    'call',
 ]
 
 COMMAND_HELP = {
@@ -41,7 +45,11 @@ COMMAND_HELP = {
     'quit':{'':['','Quit this application']},
     'update':{'':['[items]','Runs update'],
               'frequency':['(seconds)','Sets update frequency']},
-    'account':{'info':['','Returns account information']},
+    'account':{'info':['','Returns account information'],
+               'orders':['','Returns list of open orders'],
+               'history':['[history currency/currencies]','Returns history of specified currency/currencies'],
+               'update':['[part(s)]','Update one or more parts of an account'],
+               'funds':['','Returns the current funds in an account']},
     'help':{'':['','Prints useful help information'],
             'command':['[args]','Prints help about command']},
     'clear':{'':['','Clear messages from the log']},
@@ -49,10 +57,11 @@ COMMAND_HELP = {
     'connect':{'':['[websocket/socketio]','connect to the update server']},
     'disconnect':{'':['','disconnect from the update server']},
     'reconnect':{'':['[websocket/socketio]','reconnect to the update server']},
-    'login':{'':['(file) (password)','login to an account, spaces are allowed in the password']},
+    'login':{'':['(password)','login to an account, spaces are allowed in the password']},
     'logout':{'':['','logout from an account']},
     'trade':{'':['(type) (amount) [price]','place order (ommit price to do a market order)'],
-             'cancel':['(orders)','cancel one or more orders']}
+             'cancel':['(orders)','cancel one or more orders']},
+    'call':{'':['','generate a market call']}
 }
 
 WEBSOCKET_CONNECTED = 0
@@ -77,6 +86,7 @@ RECONNECT_REQUESTED = 18
 API_KEY_UNLOCKED = 19
 ORDER_PLACED = 20
 TRADE_PERFORMED = 21
+ACCOUNT_UPDATE_REQUESTED = 22
 
 BTC_FACTOR = 1E8
 USD_FACTOR = 1E5

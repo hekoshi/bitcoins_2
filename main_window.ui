@@ -327,12 +327,99 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionFull_Update"/>
+    <widget class="QMenu" name="menuUpdate_2">
+     <property name="title">
+      <string>Update</string>
+     </property>
+     <addaction name="actionUpdateAll"/>
+     <addaction name="separator"/>
+     <addaction name="actionAccount"/>
+     <addaction name="actionTicker"/>
+     <addaction name="actionDepth"/>
+     <addaction name="actionTrades"/>
+    </widget>
+    <addaction name="menuUpdate_2"/>
     <addaction name="actionClear_Messages"/>
+    <addaction name="actionSave_Log"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
+   <widget class="QMenu" name="menuAccount">
+    <property name="title">
+     <string>Account</string>
+    </property>
+    <widget class="QMenu" name="menuUpdate">
+     <property name="title">
+      <string>Update</string>
+     </property>
+     <addaction name="actionUpdate_AllAccount"/>
+     <addaction name="separator"/>
+     <addaction name="actionUpdate_History"/>
+     <addaction name="actioUpdate_Funds"/>
+     <addaction name="actionUpdate_Orders"/>
+    </widget>
+    <widget class="QMenu" name="menuLog">
+     <property name="title">
+      <string>Log</string>
+     </property>
+     <addaction name="actionLogInfo"/>
+     <addaction name="actionLogHistory"/>
+     <addaction name="actionLogOrders"/>
+    </widget>
+    <addaction name="actionLogin"/>
+    <addaction name="actionLogout"/>
+    <addaction name="separator"/>
+    <addaction name="actionChange_API_Key"/>
+    <addaction name="separator"/>
+    <addaction name="menuUpdate"/>
+    <addaction name="menuLog"/>
+   </widget>
+   <widget class="QMenu" name="menuTrade">
+    <property name="title">
+     <string>Trade</string>
+    </property>
+    <addaction name="actionPlace_Order"/>
+    <addaction name="actionCancel_Order"/>
+    <addaction name="actionCall"/>
+    <addaction name="actionAuto_Trade"/>
+   </widget>
+   <widget class="QMenu" name="menuConnection">
+    <property name="title">
+     <string>Connection</string>
+    </property>
+    <widget class="QMenu" name="menuReconnect">
+     <property name="title">
+      <string>Reconnect</string>
+     </property>
+     <addaction name="actionCurrent"/>
+     <addaction name="separator"/>
+     <addaction name="actionWebSocket"/>
+     <addaction name="actionSocket_IO"/>
+    </widget>
+    <widget class="QMenu" name="menuConnect">
+     <property name="title">
+      <string>Connect</string>
+     </property>
+     <addaction name="actionReconnectCurrent"/>
+     <addaction name="separator"/>
+     <addaction name="actionReconnectWebSocket"/>
+     <addaction name="actionReconnectSocket_IO"/>
+    </widget>
+    <addaction name="menuConnect"/>
+    <addaction name="menuReconnect"/>
+    <addaction name="actionDisconnect"/>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionPreferences"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuAccount"/>
+   <addaction name="menuTrade"/>
+   <addaction name="menuConnection"/>
+   <addaction name="menuSettings"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionQuit">
@@ -345,14 +432,179 @@
     <string>Add</string>
    </property>
   </action>
-  <action name="actionFull_Update">
-   <property name="text">
-    <string>Full Update</string>
-   </property>
-  </action>
   <action name="actionClear_Messages">
    <property name="text">
     <string>Clear Messages</string>
+   </property>
+  </action>
+  <action name="actionInfo">
+   <property name="text">
+    <string>Info</string>
+   </property>
+  </action>
+  <action name="actionHistory">
+   <property name="text">
+    <string>History</string>
+   </property>
+  </action>
+  <action name="actionOrders">
+   <property name="text">
+    <string>Orders</string>
+   </property>
+  </action>
+  <action name="actionHistory_2">
+   <property name="text">
+    <string>History</string>
+   </property>
+  </action>
+  <action name="actionUpdate_AllAccount">
+   <property name="text">
+    <string>All</string>
+   </property>
+  </action>
+  <action name="actionUpdate_History">
+   <property name="text">
+    <string>History</string>
+   </property>
+  </action>
+  <action name="actionUpdateOrders">
+   <property name="text">
+    <string>Orders</string>
+   </property>
+  </action>
+  <action name="actioUpdate_Funds">
+   <property name="text">
+    <string>Funds</string>
+   </property>
+  </action>
+  <action name="actionLogin">
+   <property name="text">
+    <string>Login</string>
+   </property>
+  </action>
+  <action name="actionLogout">
+   <property name="text">
+    <string>Logout</string>
+   </property>
+  </action>
+  <action name="actionSave_Log">
+   <property name="text">
+    <string>Save Log</string>
+   </property>
+  </action>
+  <action name="actionPlace_Order">
+   <property name="text">
+    <string>Place Order</string>
+   </property>
+  </action>
+  <action name="actionBuy">
+   <property name="text">
+    <string>Buy</string>
+   </property>
+  </action>
+  <action name="actionCall">
+   <property name="text">
+    <string>Call</string>
+   </property>
+  </action>
+  <action name="actionAuto_Trade">
+   <property name="text">
+    <string>Auto Trade</string>
+   </property>
+  </action>
+  <action name="actionCurrent">
+   <property name="text">
+    <string>Current</string>
+   </property>
+  </action>
+  <action name="actionWebSocket">
+   <property name="text">
+    <string>WebSocket</string>
+   </property>
+  </action>
+  <action name="actionSocket_IO">
+   <property name="text">
+    <string>Socket.IO</string>
+   </property>
+  </action>
+  <action name="actionDisconnect">
+   <property name="text">
+    <string>Disconnect</string>
+   </property>
+  </action>
+  <action name="actionReconnectCurrent">
+   <property name="text">
+    <string>Current</string>
+   </property>
+  </action>
+  <action name="actionReconnectWebSocket">
+   <property name="text">
+    <string>WebSocket</string>
+   </property>
+  </action>
+  <action name="actionReconnectSocket_IO">
+   <property name="text">
+    <string>Socket.IO</string>
+   </property>
+  </action>
+  <action name="actionUpdateAll">
+   <property name="text">
+    <string>All</string>
+   </property>
+  </action>
+  <action name="actionAccount">
+   <property name="text">
+    <string>Account</string>
+   </property>
+  </action>
+  <action name="actionTicker">
+   <property name="text">
+    <string>Ticker</string>
+   </property>
+  </action>
+  <action name="actionDepth">
+   <property name="text">
+    <string>Depth</string>
+   </property>
+  </action>
+  <action name="actionTrades">
+   <property name="text">
+    <string>Trades</string>
+   </property>
+  </action>
+  <action name="actionChange_API_Key">
+   <property name="text">
+    <string>Change API Key</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>Preferences</string>
+   </property>
+  </action>
+  <action name="actionLogInfo">
+   <property name="text">
+    <string>Info</string>
+   </property>
+  </action>
+  <action name="actionLogHistory">
+   <property name="text">
+    <string>History</string>
+   </property>
+  </action>
+  <action name="actionLogOrders">
+   <property name="text">
+    <string>Orders</string>
+   </property>
+  </action>
+  <action name="actionUpdate_Orders">
+   <property name="text">
+    <string>Orders</string>
+   </property>
+  </action>
+  <action name="actionCancel_Order">
+   <property name="text">
+    <string>Cancel Order</string>
    </property>
   </action>
  </widget>
